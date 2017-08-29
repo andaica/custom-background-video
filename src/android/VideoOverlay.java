@@ -27,7 +27,6 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
     private boolean mStartWhenInitialized = false;
 
     private String mFilePath;
-    private boolean mRecordAudio = true;
     private int mCameraFacing = Camera.CameraInfo.CAMERA_FACING_BACK;
     private int mOrientation;
 
@@ -47,10 +46,6 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
 
     public void setCameraFacing(String cameraFace) {
         mCameraFacing = (cameraFace.equalsIgnoreCase("FRONT") ? Camera.CameraInfo.CAMERA_FACING_FRONT : Camera.CameraInfo.CAMERA_FACING_BACK);
-    }
-
-    public void setRecordAudio(boolean recordAudio) {
-        mRecordAudio = recordAudio;
     }
 
     public void Start(String filePath) throws Exception {
@@ -102,29 +97,21 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
             profile.videoFrameHeight = lowestRes.height;
 
             mRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
-            if (mRecordAudio) {
-                // With audio
-                mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
-                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                mRecorder.setVideoFrameRate(profile.videoFrameRate);
-                mRecorder.setVideoSize(profile.videoFrameWidth, profile.videoFrameHeight);
-                mRecorder.setVideoEncodingBitRate(profile.videoBitRate);
-                mRecorder.setAudioEncodingBitRate(profile.audioBitRate);
-                mRecorder.setAudioChannels(profile.audioChannels);
-                mRecorder.setAudioSamplingRate(profile.audioSampleRate);
-                mRecorder.setVideoEncoder(profile.videoCodec);
-                mRecorder.setAudioEncoder(profile.audioCodec);
-            } else {
-                // Without audio
-                mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-                mRecorder.setVideoFrameRate(profile.videoFrameRate);
-                mRecorder.setVideoSize(profile.videoFrameWidth, profile.videoFrameHeight);
-                mRecorder.setVideoEncodingBitRate(profile.videoBitRate);
-                mRecorder.setVideoEncoder(profile.videoCodec);
-            }
+            mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER); // With audio
+            mRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+            mRecorder.setVideoFrameRate(profile.videoFrameRate);
+            mRecorder.setVideoSize(profile.videoFrameWidth, profile.videoFrameHeight);
+            mRecorder.setVideoEncodingBitRate(profile.videoBitRate);
+            mRecorder.setAudioEncodingBitRate(profile.audioBitRate);
+            mRecorder.setAudioChannels(profile.audioChannels);
+            mRecorder.setAudioSamplingRate(profile.audioSampleRate);
+            mRecorder.setVideoEncoder(profile.videoCodec);
+            mRecorder.setAudioEncoder(profile.audioCodec);
+
 
             mRecorder.setOutputFile(filePath);
-            mRecorder.setOrientationHint(mOrientation);
+            int orientation = (360 - mOrientation) % 360;
+            mRecorder.setOrientationHint(orientation);
             mRecorder.prepare();
             Log.d(TAG, "Starting recording");
             mRecorder.start();

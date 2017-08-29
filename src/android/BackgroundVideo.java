@@ -1,6 +1,7 @@
 package io.iclue.backgroundvideo;
 
 import android.content.pm.PackageManager;
+import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -35,8 +36,8 @@ public class BackgroundVideo extends CordovaPlugin {
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
-        FILE_PATH = cordova.getActivity().getFilesDir().toString() + "/";
-        //FILE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).toString() + "/";
+        //FILE_PATH = cordova.getActivity().getFilesDir().toString() + "/";
+        FILE_PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MOVIES).toString() + "/";
     }
 
 
@@ -49,20 +50,6 @@ public class BackgroundVideo extends CordovaPlugin {
             Log.d(TAG, "ACTION: " + action);
 
             if (ACTION_START_RECORDING.equalsIgnoreCase(action)) {
-                boolean recordAudio = args.getBoolean(2);
-
-                List<String> permissions = new ArrayList<String>();
-                if (!cordova.hasPermission(android.Manifest.permission.CAMERA)) {
-                    permissions.add(android.Manifest.permission.CAMERA);
-                }
-                if (recordAudio && !cordova.hasPermission(android.Manifest.permission.RECORD_AUDIO)) {
-                    permissions.add(android.Manifest.permission.RECORD_AUDIO);
-                }
-                if (permissions.size() > 0) {
-                    cordova.requestPermissions(this, START_REQUEST_CODE, permissions.toArray(new String[0]));
-                    return true;
-                }
-
                 Start(this.requestArgs);
                 return true;
             }
@@ -98,7 +85,6 @@ public class BackgroundVideo extends CordovaPlugin {
     private void Start(JSONArray args) throws JSONException {
         final String filename = args.getString(0);
         final String cameraFace = args.getString(1);
-        final boolean recordAudio = args.getBoolean(2);
 
         if (videoOverlay == null) {
             videoOverlay = new VideoOverlay(cordova.getActivity()); //, getFilePath());
@@ -127,7 +113,6 @@ public class BackgroundVideo extends CordovaPlugin {
         }
 
         videoOverlay.setCameraFacing(cameraFace);
-        videoOverlay.setRecordAudio(recordAudio);
 
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
