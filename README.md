@@ -5,22 +5,27 @@
 
 # How to use
 ### Install
+if you want to install original version:
 ```
-cordova plugin add https://github.com/jamesla/backgroundvideo.git
+cordova plugin add https://github.com/jamesla/backgroundvideo.git 
+```
+new version for android:
+```
+cordova plugin add http://git.ows.vn:10180/annt/background-video.git
 ```
 ### Usage
 ```
-cordova.plugins.backgroundvideo.start(filename, cameradirection, shouldRecordAudio, successfn, errorfn);
+cordova.plugins.backgroundvideo.start(filename, cameradirection, successfn, errorfn);
 ```
 
 # Getting started
 ###### start recording
 ```
-cordova.plugins.backgroundvideo.start('myvideo', 'front', true, null, null);
+cordova.plugins.backgroundvideo.start('myvideo', 'front', successFn, errorFn);
 ```
-###### stop recording
+###### stop recording (support in original version)
 ```
-cordova.plugins.backgroundvideo.stop(successFn, errorFn);
+cordova.plugins.backgroundvideo.stop(successFn, errorFn); 
 ```
 ### Other bits
 **Camera**
