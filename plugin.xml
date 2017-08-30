@@ -64,6 +64,15 @@
     <source-file src="src/android/BackgroundVideo.java" target-dir="src/io/iclue/backgroundvideo" />
     <source-file src="src/android/CameraHelper.java" target-dir="src/io/iclue/backgroundvideo" />
     <source-file src="src/android/VideoOverlay.java" target-dir="src/io/iclue/backgroundvideo" />
+
+    <source-file src="src/android/res/drawable-hdpi/btn_start_record.png" target-dir="res/drawable-hdpi"/>
+    <source-file src="src/android/res/drawable-hdpi/btn_stop_record.png" target-dir="res/drawable-hdpi"/>
+    <source-file src="src/android/res/drawable-mdpi/btn_start_record.png" target-dir="res/drawable-mdpi"/>
+    <source-file src="src/android/res/drawable-mdpi/btn_stop_record.png" target-dir="res/drawable-mdpi"/>
+    <source-file src="src/android/res/drawable-xhdpi/btn_start_record.png" target-dir="res/drawable-xhdpi"/>
+    <source-file src="src/android/res/drawable-xhdpi/btn_stop_record.png" target-dir="res/drawable-xhdpi"/>
+    <source-file src="src/android/res/drawable-xxhdpi/btn_start_record.png" target-dir="res/drawable-xxhdpi"/>
+    <source-file src="src/android/res/drawable-xxhdpi/btn_stop_record.png" target-dir="res/drawable-xxhdpi"/>
   </platform>
 
 
