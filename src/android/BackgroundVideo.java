@@ -6,6 +6,7 @@ import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -33,7 +34,9 @@ public class BackgroundVideo extends CordovaPlugin {
 
     private String FILE_PATH = "";
     private String FILE_NAME = "";
+    private RelativeLayout containerView;
     private VideoOverlay videoOverlay;
+    private Button recordBtn;
     private CallbackContext callbackContext;
     private JSONArray requestArgs;
 
@@ -89,6 +92,7 @@ public class BackgroundVideo extends CordovaPlugin {
     private void Start(JSONArray args) throws JSONException {
         FILE_NAME = args.getString(0);
         final String cameraFace = args.getString(1);
+        videoOverlay = null;
 
         if (videoOverlay == null) {
             videoOverlay = new VideoOverlay(cordova.getActivity()); //, getFilePath());
@@ -103,23 +107,11 @@ public class BackgroundVideo extends CordovaPlugin {
                         cordova.getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
 
                         // NOTE: GT-I9300 testing required wrapping view in relative layout for setAlpha to work.
-                        RelativeLayout containerView = new RelativeLayout(cordova.getActivity());
+                        containerView = new RelativeLayout(cordova.getActivity());
                         containerView.setAlpha(1.0f);
                         containerView.addView(videoOverlay, new ViewGroup.LayoutParams(displaymetrics.widthPixels, displaymetrics.heightPixels));
-
-                        Button recordBtn = new Button(cordova.getActivity());
-                        recordBtn.setId(R.id.button);
-                        recordBtn.setText("Start");
-                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(200, 200);
-                        params.bottomMargin = 60;
-                        params.addRule(RelativeLayout.CENTER_IN_PARENT);
-                        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-                        recordBtn.setLayoutParams(params);
+                        recordBtn = setRecordButton();
                         containerView.addView(recordBtn);
-                        recordBtn.bringToFront();
-                        recordBtn.setBackgroundColor(Color.RED);
-                        recordBtn.setBackgroundResource(R.drawable.btn_start_record);
-
                         cordova.getActivity().addContentView(containerView, new ViewGroup.LayoutParams(displaymetrics.widthPixels, displaymetrics.heightPixels));
                     } catch (Exception e) {
                         Log.e(TAG, "Error during preview create", e);
@@ -132,18 +124,53 @@ public class BackgroundVideo extends CordovaPlugin {
         videoOverlay.setCameraFacing(cameraFace);
     }
 
-    private void onStartRecord(){
+    private Button setRecordButton() {
+        recordBtn = new Button(cordova.getActivity());
+        recordBtn.setId(R.id.button);
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(200, 200);
+        params.bottomMargin = 60;
+        params.addRule(RelativeLayout.CENTER_IN_PARENT);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        recordBtn.setLayoutParams(params);
+        recordBtn.bringToFront();
+        recordBtn.setBackgroundResource(R.drawable.btn_start_record);
+        recordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onStartRecord();
+            }
+        });
+        return recordBtn;
+    }
+
+    private void onStartRecord() {
         cordova.getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
                     videoOverlay.Start(getFilePath(FILE_NAME));
+                    setStopButton();
                 } catch (Exception e) {
                     e.printStackTrace();
                     callbackContext.error(e.getMessage());
                 }
             }
         });
+    }
+
+    private Button setStopButton() {
+        recordBtn.setBackgroundResource(R.drawable.btn_stop_record);
+        recordBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    Stop();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        return recordBtn;
     }
 
     private void Stop() throws JSONException {
@@ -153,6 +180,7 @@ public class BackgroundVideo extends CordovaPlugin {
                 if (videoOverlay != null) {
                     try {
                         String filepath = videoOverlay.Stop();
+                        removeButton();
                         callbackContext.success(filepath);
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -161,6 +189,12 @@ public class BackgroundVideo extends CordovaPlugin {
                 }
             }
         });
+    }
+
+    private void removeButton() {
+        if(recordBtn != null) {
+            containerView.removeView(recordBtn);
+        }
     }
 
     private String getFilePath(String filename) {

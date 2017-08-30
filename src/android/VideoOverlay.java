@@ -39,7 +39,7 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
         // Create surface to display the camera preview
         mPreview = new TextureView(context);
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        mPreview.setClickable(false);
+        mPreview.setClickable(true);
         mPreview.setSurfaceTextureListener(this);
         attachView();
     }
