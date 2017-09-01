@@ -29,7 +29,7 @@ class CameraHelper {
         Camera.Size small = sl.get(0);
 
         for (Camera.Size s : sl) {
-            if ((s.height * s.width) < (small.height * small.width))
+            if ((s.height * s.width) < (small.height * small.width) && (s.height * s.width) >= 60000)
                 small = s;
         }
 

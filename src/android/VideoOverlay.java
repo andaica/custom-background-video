@@ -86,8 +86,10 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
             mRecorder.setCamera(mCamera);
 
             CamcorderProfile profile;
-            if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_LOW)) {
-                profile = CamcorderProfile.get(mCameraId, CamcorderProfile.QUALITY_LOW);
+            if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_480P)) {
+                profile = CamcorderProfile.get(mCameraId, CamcorderProfile.QUALITY_480P);
+            } else if (CamcorderProfile.hasProfile(mCameraId, CamcorderProfile.QUALITY_720P)) {
+                profile = CamcorderProfile.get(mCameraId, CamcorderProfile.QUALITY_720P);
             } else {
                 profile = CamcorderProfile.get(mCameraId, CamcorderProfile.QUALITY_HIGH);
             }
@@ -95,6 +97,7 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
             Camera.Size lowestRes = CameraHelper.getLowestResolution(cameraParameters);
             profile.videoFrameWidth = lowestRes.width;
             profile.videoFrameHeight = lowestRes.height;
+            profile.videoBitRate = 700000;  // default for lightweight video
 
             mRecorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
             mRecorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER); // With audio
@@ -107,7 +110,6 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
             mRecorder.setAudioSamplingRate(profile.audioSampleRate);
             mRecorder.setVideoEncoder(profile.videoCodec);
             mRecorder.setAudioEncoder(profile.audioCodec);
-
 
             mRecorder.setOutputFile(filePath);
             int orientation = (360 - mOrientation) % 360;
