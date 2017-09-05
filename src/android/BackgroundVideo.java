@@ -109,7 +109,17 @@ public class BackgroundVideo extends CordovaPlugin {
                         // NOTE: GT-I9300 testing required wrapping view in relative layout for setAlpha to work.
                         containerView = new RelativeLayout(cordova.getActivity());
                         containerView.setAlpha(1.0f);
-                        containerView.addView(videoOverlay, new ViewGroup.LayoutParams(displaymetrics.widthPixels, displaymetrics.heightPixels));
+                        containerView.setBackgroundColor(Color.BLACK);
+
+                        RelativeLayout wrapper = new RelativeLayout(cordova.getActivity());
+                        wrapper.addView(videoOverlay);
+
+                        RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                        layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
+                        layoutParams.bottomMargin = 60;
+                        wrapper.setLayoutParams(layoutParams);
+
+                        containerView.addView(wrapper);
                         recordBtn = setRecordButton();
                         containerView.addView(recordBtn);
                         cordova.getActivity().addContentView(containerView, new ViewGroup.LayoutParams(displaymetrics.widthPixels, displaymetrics.heightPixels));
@@ -121,7 +131,7 @@ public class BackgroundVideo extends CordovaPlugin {
             });
         }
 
-        videoOverlay.setCameraFacing(cameraFace);
+        //videoOverlay.setCameraFacing(cameraFace);
     }
 
     private Button setRecordButton() {
@@ -181,6 +191,7 @@ public class BackgroundVideo extends CordovaPlugin {
                     try {
                         String filepath = videoOverlay.Stop();
                         removeButton();
+                        ((ViewGroup) containerView.getParent()).removeView(containerView);
                         callbackContext.success(filepath);
                     } catch (IOException e) {
                         e.printStackTrace();

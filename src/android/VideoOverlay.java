@@ -34,8 +34,13 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
         super(context);
 
         this.setClickable(false);
-        this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        initializeCamera();
 
+        //this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        Camera.Size size = mCamera.getParameters().getPreviewSize();
+        int height = size.height > size.width ? size.height : size.width;
+        int width = size.height < size.width ? size.height : size.width;
+        this.setLayoutParams(new ViewGroup.LayoutParams(width, height));
         // Create surface to display the camera preview
         mPreview = new TextureView(context);
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -157,6 +162,7 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
     }
 
     private void initializeCamera() {
+        this.setCameraFacing("front");
         if (mCamera == null) {
             try {
                 mCameraId = CameraHelper.getCameraId(mCameraFacing);
@@ -166,7 +172,7 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
                     // Set camera parameters
                     mOrientation = CameraHelper.calculateOrientation((Activity) this.getContext(), mCameraId);
                     Camera.Parameters cameraParameters = mCamera.getParameters();
-                    Camera.Size previewSize = CameraHelper.getPreviewSize(cameraParameters);
+                    Camera.Size previewSize = CameraHelper.getLowestResolution(cameraParameters);
                     cameraParameters.setPreviewSize(previewSize.width, previewSize.height);
                     cameraParameters.setRotation(mOrientation);
                     cameraParameters.setRecordingHint(true);
@@ -218,8 +224,6 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
         Log.d(TAG, "Creating Texture Created");
 
         this.mRecordingState = RecordingState.STOPPED;
-
-        initializeCamera();
 
         if (mCamera != null) {
             try {
