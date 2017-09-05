@@ -191,7 +191,7 @@ public class BackgroundVideo extends CordovaPlugin {
                     try {
                         String filepath = videoOverlay.Stop();
                         removeButton();
-                        ((ViewGroup) containerView.getParent()).removeView(containerView);
+                        containerView.setBackgroundColor(0x00000000);
                         callbackContext.success(filepath);
                     } catch (IOException e) {
                         e.printStackTrace();
