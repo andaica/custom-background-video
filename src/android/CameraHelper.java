@@ -29,11 +29,26 @@ class CameraHelper {
         Camera.Size small = sl.get(0);
 
         for (Camera.Size s : sl) {
-            if ((s.height * s.width) < (small.height * small.width) && (s.height * s.width) >= 60000)
-                small = s;
+            if((s.height * s.width) >= 60000) {
+                if ((s.height * s.width) < (small.height * small.width) || (small.height * small.width) < 60000) {
+                    small = s;
+                }
+            }
         }
 
         return small;
+    }
+
+    static int getCompatibleVideoHeight(Activity activity, Camera.Parameters cp) {
+        int windowHeight = activity.getWindowManager().getDefaultDisplay().getHeight();
+        int windowWidht = activity.getWindowManager().getDefaultDisplay().getWidth();
+        int realWidth = windowHeight < windowWidht ? windowHeight : windowWidht;
+
+        Camera.Size size = getLowestResolution(cp);
+        float ratio = (size.width > size.height) ? ((float)size.width / (float)size.height) : ((float)size.height / (float)size.width);
+
+        int result = Math.round(ratio * realWidth);
+        return result;
     }
 
     static int getCameraId(int position) {

@@ -32,9 +32,9 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
 
     public VideoOverlay(Context context) {
         super(context);
-
-        this.setClickable(false);
         this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        this.setClickable(false);
+        initializeCamera();
 
         // Create surface to display the camera preview
         mPreview = new TextureView(context);
@@ -65,6 +65,8 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
             return;
         }
 
+        resizePreview();
+
         if (TextUtils.isEmpty(mFilePath)) {
             throw new IllegalArgumentException("Filename for recording must be set");
         }
@@ -78,6 +80,9 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
 
         // Set camera parameters
         Camera.Parameters cameraParameters = mCamera.getParameters();
+        Camera.Size preview = CameraHelper.getLowestResolution(cameraParameters);
+        cameraParameters.setPreviewSize(preview.width, preview.height);
+        mCamera.setParameters(cameraParameters);
         mCamera.stopPreview(); //Apparently helps with freezing issue on some Samsung devices.
         mCamera.unlock();
 
@@ -124,6 +129,12 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
         }
     }
 
+    public void resizePreview() {
+        ViewGroup.LayoutParams params = this.getLayoutParams();
+        params.height = CameraHelper.getCompatibleVideoHeight((Activity) this.getContext(), mCamera.getParameters());
+        this.setLayoutParams(params);
+    }
+
     public String Stop() throws IOException {
         Log.d(TAG, "stopRecording called");
 
@@ -157,6 +168,7 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
     }
 
     private void initializeCamera() {
+        this.setCameraFacing("front");
         if (mCamera == null) {
             try {
                 mCameraId = CameraHelper.getCameraId(mCameraFacing);
@@ -218,8 +230,6 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
         Log.d(TAG, "Creating Texture Created");
 
         this.mRecordingState = RecordingState.STOPPED;
-
-        initializeCamera();
 
         if (mCamera != null) {
             try {
