@@ -39,6 +39,18 @@ class CameraHelper {
         return small;
     }
 
+    static int getCompatibleVideoHeight(Activity activity, Camera.Parameters cp) {
+        int windowHeight = activity.getWindowManager().getDefaultDisplay().getHeight();
+        int windowWidht = activity.getWindowManager().getDefaultDisplay().getWidth();
+        int realWidth = windowHeight < windowWidht ? windowHeight : windowWidht;
+
+        Camera.Size size = getLowestResolution(cp);
+        float ratio = (size.width > size.height) ? ((float)size.width / (float)size.height) : ((float)size.height / (float)size.width);
+
+        int result = Math.round(ratio * realWidth);
+        return result;
+    }
+
     static int getCameraId(int position) {
         // Find the total number of cameras available
         int mNumberOfCameras = Camera.getNumberOfCameras();

@@ -32,15 +32,10 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
 
     public VideoOverlay(Context context) {
         super(context);
-
+        this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         this.setClickable(false);
         initializeCamera();
 
-        //this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        Camera.Size size = mCamera.getParameters().getPreviewSize();
-        int height = size.height > size.width ? size.height : size.width;
-        int width = size.height < size.width ? size.height : size.width;
-        this.setLayoutParams(new ViewGroup.LayoutParams(width, height));
         // Create surface to display the camera preview
         mPreview = new TextureView(context);
         mPreview.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
@@ -70,6 +65,8 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
             return;
         }
 
+        resizePreview();
+
         if (TextUtils.isEmpty(mFilePath)) {
             throw new IllegalArgumentException("Filename for recording must be set");
         }
@@ -83,6 +80,9 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
 
         // Set camera parameters
         Camera.Parameters cameraParameters = mCamera.getParameters();
+        Camera.Size preview = CameraHelper.getLowestResolution(cameraParameters);
+        cameraParameters.setPreviewSize(preview.width, preview.height);
+        mCamera.setParameters(cameraParameters);
         mCamera.stopPreview(); //Apparently helps with freezing issue on some Samsung devices.
         mCamera.unlock();
 
@@ -129,6 +129,12 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
         }
     }
 
+    public void resizePreview() {
+        ViewGroup.LayoutParams params = this.getLayoutParams();
+        params.height = CameraHelper.getCompatibleVideoHeight((Activity) this.getContext(), mCamera.getParameters());
+        this.setLayoutParams(params);
+    }
+
     public String Stop() throws IOException {
         Log.d(TAG, "stopRecording called");
 
@@ -172,7 +178,7 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
                     // Set camera parameters
                     mOrientation = CameraHelper.calculateOrientation((Activity) this.getContext(), mCameraId);
                     Camera.Parameters cameraParameters = mCamera.getParameters();
-                    Camera.Size previewSize = CameraHelper.getLowestResolution(cameraParameters);
+                    Camera.Size previewSize = CameraHelper.getPreviewSize(cameraParameters);
                     cameraParameters.setPreviewSize(previewSize.width, previewSize.height);
                     cameraParameters.setRotation(mOrientation);
                     cameraParameters.setRecordingHint(true);
