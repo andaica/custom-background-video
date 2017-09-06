@@ -116,10 +116,9 @@ public class BackgroundVideo extends CordovaPlugin {
 
                         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
-                        layoutParams.bottomMargin = 60;
                         wrapper.setLayoutParams(layoutParams);
-
                         containerView.addView(wrapper);
+                        
                         recordBtn = setRecordButton();
                         containerView.addView(recordBtn);
                         cordova.getActivity().addContentView(containerView, new ViewGroup.LayoutParams(displaymetrics.widthPixels, displaymetrics.heightPixels));
