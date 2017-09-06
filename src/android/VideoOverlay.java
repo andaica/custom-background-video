@@ -65,8 +65,6 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
             return;
         }
 
-        resizePreview();
-
         if (TextUtils.isEmpty(mFilePath)) {
             throw new IllegalArgumentException("Filename for recording must be set");
         }
@@ -80,9 +78,19 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
 
         // Set camera parameters
         Camera.Parameters cameraParameters = mCamera.getParameters();
-        Camera.Size preview = CameraHelper.getLowestResolution(cameraParameters);
-        cameraParameters.setPreviewSize(preview.width, preview.height);
-        mCamera.setParameters(cameraParameters);
+        //catch system error occur when setParameters on some device -> do nothing
+        boolean isSetCameraParams = true;
+        try {
+            Camera.Size preview = CameraHelper.getLowestResolution(cameraParameters);
+            cameraParameters.setPreviewSize(preview.width, preview.height);
+            mCamera.setParameters(cameraParameters);
+        } catch (Exception e) {
+            isSetCameraParams = false;
+            e.printStackTrace();
+        }
+        if(isSetCameraParams)
+            resizePreview();
+
         mCamera.stopPreview(); //Apparently helps with freezing issue on some Samsung devices.
         mCamera.unlock();
 
