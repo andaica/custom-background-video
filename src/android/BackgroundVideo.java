@@ -104,12 +104,18 @@ public class BackgroundVideo extends CordovaPlugin {
                     try {
                         // Get screen dimensions
                         DisplayMetrics displaymetrics = new DisplayMetrics();
-                        cordova.getActivity().getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+                        cordova.getActivity().getWindowManager().getDefaultDisplay().getRealMetrics(displaymetrics);
 
                         // NOTE: GT-I9300 testing required wrapping view in relative layout for setAlpha to work.
                         containerView = new RelativeLayout(cordova.getActivity());
                         containerView.setAlpha(1.0f);
                         containerView.setBackgroundColor(Color.BLACK);
+                        containerView.setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        );
 
                         RelativeLayout wrapper = new RelativeLayout(cordova.getActivity());
                         wrapper.addView(videoOverlay);
@@ -191,6 +197,9 @@ public class BackgroundVideo extends CordovaPlugin {
                         String filepath = videoOverlay.Stop();
                         removeButton();
                         containerView.setBackgroundColor(0x00000000);
+                        containerView.setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        );
                         callbackContext.success(filepath);
                     } catch (IOException e) {
                         e.printStackTrace();

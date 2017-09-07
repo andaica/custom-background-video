@@ -39,12 +39,11 @@ class CameraHelper {
         return small;
     }
 
-    static int getCompatibleVideoHeight(Activity activity, Camera.Parameters cp) {
+    static int getCompatibleVideoHeight(Activity activity, Camera.Size size) {
         int windowHeight = activity.getWindowManager().getDefaultDisplay().getHeight();
         int windowWidth = activity.getWindowManager().getDefaultDisplay().getWidth();
         int realWidth = windowHeight < windowWidth ? windowHeight : windowWidth;
 
-        Camera.Size size = getLowestResolution(cp);
         float ratio = (size.width > size.height) ? ((float)size.width / (float)size.height) : ((float)size.height / (float)size.width);
 
         int result = Math.round(ratio * realWidth);

@@ -32,9 +32,11 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
 
     public VideoOverlay(Context context) {
         super(context);
-        this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         this.setClickable(false);
         initializeCamera();
+        Camera.Size previewSize = CameraHelper.getPreviewSize(mCamera.getParameters());
+        int height = CameraHelper.getCompatibleVideoHeight((Activity) this.getContext(), previewSize);
+        this.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, height));
 
         // Create surface to display the camera preview
         mPreview = new TextureView(context);
@@ -139,7 +141,8 @@ public class VideoOverlay extends ViewGroup implements TextureView.SurfaceTextur
 
     public void resizePreview() {
         ViewGroup.LayoutParams params = this.getLayoutParams();
-        params.height = CameraHelper.getCompatibleVideoHeight((Activity) this.getContext(), mCamera.getParameters());
+        Camera.Size size = CameraHelper.getLowestResolution(mCamera.getParameters());
+        params.height = CameraHelper.getCompatibleVideoHeight((Activity) this.getContext(), size);
         this.setLayoutParams(params);
     }
 
