@@ -11,7 +11,7 @@ cordova plugin add https://github.com/jamesla/backgroundvideo.git
 ```
 new version for android:
 ```
-cordova plugin add http://git.ows.vn:10180/annt/background-video.git
+cordova plugin add https://github.com/andaica/custom-background-video.git
 ```
 ### Usage
 ```
