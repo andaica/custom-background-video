@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.interview_maker.app.R;
+import com.interviewMaker.app.R;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
@@ -124,7 +124,7 @@ public class BackgroundVideo extends CordovaPlugin {
                         layoutParams.addRule(RelativeLayout.CENTER_IN_PARENT, RelativeLayout.TRUE);
                         wrapper.setLayoutParams(layoutParams);
                         containerView.addView(wrapper);
-                        
+
                         recordBtn = setRecordButton();
                         containerView.addView(recordBtn);
                         cordova.getActivity().addContentView(containerView, new ViewGroup.LayoutParams(displaymetrics.widthPixels, displaymetrics.heightPixels));
