@@ -73,6 +73,8 @@
     <source-file src="src/android/res/drawable-xhdpi/btn_stop_record.png" target-dir="res/drawable-xhdpi"/>
     <source-file src="src/android/res/drawable-xxhdpi/btn_start_record.png" target-dir="res/drawable-xxhdpi"/>
     <source-file src="src/android/res/drawable-xxhdpi/btn_stop_record.png" target-dir="res/drawable-xxhdpi"/>
+      
+    <source-file src="src/android/res/values/ids.xml" target-dir="res/values"/>
   </platform>
 
 
