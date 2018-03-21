@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
-import com.interviewMaker.app.R;
+import com.interview_maker.app2.R;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaInterface;
